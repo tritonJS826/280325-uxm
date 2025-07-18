@@ -1,3 +1,12 @@
+
+function myFunc(age) {
+    console.log(age)
+}
+
+age => console.log(age)
+
+const isProduction = false;
+
 const delay = Math.random() * 1000;
 function fetchData() {
     const promise = new Promise((res, rej) => {
@@ -14,15 +23,56 @@ function fetchData() {
             } else {
                 rej({isSuccessful, testData})
             }
-        }, delay)
+
+    }, delay)
+
     });
 
     return promise;
 }
 
+// prod variant
 fetchData()
     .then((data) => {console.log(data.isSuccessful, data.testData)})
     .catch(({isSuccessful, testData}) => {console.error(isSuccessful, testData)})
+    .finally(() => {})
+
+if (isProduction === false) {
+    // test green scenario
+    const userCredentials = Promise.resolve({isSuccessful: true, testData: "1,1"}) // stub, mock
+    userCredentials.then((data) => console.log("fetch data tested green scenario"))
+
+    // test green scenario
+    const userCredentialsRed = Promise.reject({isSuccessful: false, testData: "0,0"}) // stub, mock
+    userCredentialsRed
+        .then((data) => console.log("fetch data tested green scenario"))
+        .catch((data) => console.log("fetch data tested red scenario" + data)) // will be executed
+
+
+    const allPromises = Promise.all([userCredentials, userCredentialsRed]) // all should be resolved
+    allPromises
+        .then(([dataFromUserCredentials, dataFromUserCredentialsRed]) => 
+        console.log(dataFromUserCredentials, dataFromUserCredentialsRed))
+        .catch(() => {}) // will be executed
+
+    const allPromisesSettled = Promise.allSettled([userCredentials, userCredentialsRed]) // all should be finished (not pending)
+        .then() // will be executed
+
+    const anyPromises = Promise.any([userCredentials, userCredentialsRed, userCredentials]) // first which was resolved
+        .then() // will be executed if at least one will be resolved
+    
+    const racePromises = Promise.race([userCredentials, userCredentialsRed] // at least one should be finished (not pending)
+        .then()
+    )
+}
+
+
+
+
+
+
+
+
 
 
 
