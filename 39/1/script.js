@@ -281,3 +281,4 @@ document.getElementById("main").innerHTML = "<p>Hello!</p>"
 
 document.getElementById("main")
     .addEventListener('focus', () => {alert('Element was focused')})
+
